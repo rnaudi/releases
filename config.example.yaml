@@ -1,0 +1,19 @@
+# Copy to config.yaml and edit with your repos:
+#   cp config.example.yaml config.yaml
+#
+# Fields:
+#   id    - URL-safe identifier (filenames, URL hash)
+#   name  - Display name in dashboard tabs
+#   repo  - GitHub owner/repo
+#   base  - Branch that release PRs target
+
+projects:
+  - id: deno
+    name: Deno
+    repo: denoland/deno
+    base: main
+
+  - id: gh-cli
+    name: GitHub CLI
+    repo: cli/cli
+    base: trunk

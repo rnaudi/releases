@@ -2,7 +2,8 @@
 
 Track how often your team ships. Point it at your GitHub repos, get a dashboard.
 
-![screenshot](screenshot.png)
+<img width="1279" height="1914" alt="Screenshot 2026-02-12 at 18 03 11" src="https://github.com/user-attachments/assets/236499f8-250b-433c-bb64-f432e3aea449" />
+
 
 ## Prerequisites
 

@@ -271,47 +271,35 @@ function generateHtml(payloads: ProjectPayload[]): string {
     .join("\n        ");
 
   return `<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Release Frequency Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
   <style>
-    /* -- Dark theme (default) -- */
-    [data-theme="dark"] {
-      --color-canvas-default: #0d1117;
-      --color-canvas-subtle: #161b22;
-      --color-border-default: #30363d;
-      --color-border-muted: #21262d;
-      --color-fg-default: #c9d1d9;
-      --color-fg-muted: #8b949e;
-      --color-fg-subtle: #484f58;
-      --color-accent-fg: #58a6ff;
-      --color-success-emphasis: #238636;
-      --color-danger-fg: #f85149;
-      --color-danger-muted: rgba(248, 81, 73, 0.45);
-      --hm-0: #161b22; --hm-0-border: #30363d; --hm-0-fg: #484f58;
-      --hm-1: #0e4429; --hm-2: #006d32; --hm-3: #26a641; --hm-4: #39d353;
-      --hm-fg: #c9d1d9;
-    }
-
-    /* -- Light theme -- */
-    [data-theme="light"] {
-      --color-canvas-default: #ffffff;
-      --color-canvas-subtle: #f6f8fa;
-      --color-border-default: #d0d7de;
-      --color-border-muted: #d8dee4;
-      --color-fg-default: #1f2328;
-      --color-fg-muted: #656d76;
-      --color-fg-subtle: #6e7781;
-      --color-accent-fg: #0969da;
-      --color-success-emphasis: #1a7f37;
-      --color-danger-fg: #cf222e;
-      --color-danger-muted: rgba(207, 34, 46, 0.4);
-      --hm-0: #ebedf0; --hm-0-border: #d0d7de; --hm-0-fg: #6e7781;
-      --hm-1: #9be9a8; --hm-2: #40c463; --hm-3: #30a14e; --hm-4: #216e39;
-      --hm-fg: #1f2328;
+    /* -- Theme system using light-dark() -- */
+    :root {
+      color-scheme: dark light;
+      --color-canvas-default: light-dark(#ffffff, #0d1117);
+      --color-canvas-subtle: light-dark(#f6f8fa, #161b22);
+      --color-border-default: light-dark(#d0d7de, #30363d);
+      --color-border-muted: light-dark(#d8dee4, #21262d);
+      --color-fg-default: light-dark(#1f2328, #c9d1d9);
+      --color-fg-muted: light-dark(#656d76, #8b949e);
+      --color-fg-subtle: light-dark(#6e7781, #484f58);
+      --color-accent-fg: light-dark(#0969da, #58a6ff);
+      --color-success-emphasis: light-dark(#1a7f37, #238636);
+      --color-danger-fg: light-dark(#cf222e, #f85149);
+      --color-danger-muted: light-dark(rgba(207, 34, 46, 0.4), rgba(248, 81, 73, 0.45));
+      --hm-0: light-dark(#ebedf0, #161b22);
+      --hm-0-border: light-dark(#d0d7de, #30363d);
+      --hm-0-fg: light-dark(#6e7781, #484f58);
+      --hm-1: light-dark(#9be9a8, #0e4429);
+      --hm-2: light-dark(#40c463, #006d32);
+      --hm-3: light-dark(#30a14e, #26a641);
+      --hm-4: light-dark(#216e39, #39d353);
+      --hm-fg: light-dark(#1f2328, #c9d1d9);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -339,6 +327,7 @@ function generateHtml(payloads: ProjectPayload[]): string {
       font-weight: 600;
       color: var(--color-fg-default);
       margin-bottom: 0.15rem;
+      text-wrap: balance;
     }
     .header-text .subtitle {
       color: var(--color-fg-muted);
@@ -429,6 +418,7 @@ function generateHtml(payloads: ProjectPayload[]): string {
       font-size: 0.95rem;
       font-weight: 600;
       color: var(--color-fg-default);
+      text-wrap: balance;
     }
     .card canvas { width: 100% !important; }
     .row {
@@ -438,6 +428,9 @@ function generateHtml(payloads: ProjectPayload[]): string {
       margin: 0 auto 1rem auto;
     }
     .row .card { flex: 1; margin-bottom: 0; }
+    .chart-h-sm { height: 180px; }
+    .chart-h-md { height: 260px; }
+    .chart-h-lg { height: 320px; }
     .section-title {
       max-width: 1200px;
       margin: 2rem auto 0.75rem auto;
@@ -471,14 +464,10 @@ function generateHtml(payloads: ProjectPayload[]): string {
       transition: background 0.2s;
     }
     .hm-level-0 { background: var(--hm-0); color: var(--hm-0-fg); border: 1px solid var(--hm-0-border); }
-    .hm-level-1 { background: var(--hm-1); color: var(--hm-fg); }
-    .hm-level-2 { background: var(--hm-2); color: var(--hm-fg); }
-    .hm-level-3 { background: var(--hm-3); color: var(--hm-fg); }
-    .hm-level-4 { background: var(--hm-4); color: var(--hm-fg); }
-    [data-theme="light"] .hm-level-1 { color: #1f2328; }
-    [data-theme="light"] .hm-level-2 { color: #fff; }
-    [data-theme="light"] .hm-level-3 { color: #fff; }
-    [data-theme="light"] .hm-level-4 { color: #fff; }
+    .hm-level-1 { background: var(--hm-1); color: light-dark(#1f2328, var(--hm-fg)); }
+    .hm-level-2 { background: var(--hm-2); color: light-dark(#fff, var(--hm-fg)); }
+    .hm-level-3 { background: var(--hm-3); color: light-dark(#fff, var(--hm-fg)); }
+    .hm-level-4 { background: var(--hm-4); color: light-dark(#fff, var(--hm-fg)); }
 
     .heatmap-table .year-label {
       font-weight: 600;
@@ -544,17 +533,17 @@ function generateHtml(payloads: ProjectPayload[]): string {
   <div class="row">
     <div class="card">
       <h2>Releases per Year</h2>
-      <div style="height: 260px;"><canvas id="yearlyChart"></canvas></div>
+      <div class="chart-h-md"><canvas id="yearlyChart"></canvas></div>
     </div>
     <div class="card">
       <h2>Day-of-Week Distribution</h2>
-      <div style="height: 260px;"><canvas id="dayChart"></canvas></div>
+      <div class="chart-h-md"><canvas id="dayChart"></canvas></div>
     </div>
   </div>
 
   <div class="card">
     <h2>Monthly Trend</h2>
-    <div style="height: 320px;"><canvas id="monthlyChart"></canvas></div>
+    <div class="chart-h-lg"><canvas id="monthlyChart"></canvas></div>
   </div>
 
   <h3 class="section-title">Weekly Breakdown by Year</h3>
@@ -591,7 +580,7 @@ function generateHtml(payloads: ProjectPayload[]): string {
     };
 
     function currentTheme() {
-      return document.documentElement.getAttribute('data-theme') || 'dark';
+      return document.documentElement.style.colorScheme || 'dark';
     }
     function th() { return themes[currentTheme()]; }
 
@@ -650,7 +639,7 @@ function generateHtml(payloads: ProjectPayload[]): string {
       const el = document.getElementById('weekly-container');
       el.innerHTML = p.weeklyPerYear.map(function(yw) {
         return '<div class="card"><h2>' + yw.year + '</h2>' +
-          '<div style="height: 180px;"><canvas id="weekly-' + yw.year + '"></canvas></div></div>';
+          '<div class="chart-h-sm"><canvas id="weekly-' + yw.year + '"></canvas></div></div>';
       }).join('');
     }
 
@@ -701,8 +690,9 @@ function generateHtml(payloads: ProjectPayload[]): string {
           ]
         },
         options: {
-          responsive: true,
+           responsive: true,
           maintainAspectRatio: false,
+          layout: { padding: { top: 20 } },
           plugins: {
             legend: {
               position: 'top',
@@ -740,6 +730,7 @@ function generateHtml(payloads: ProjectPayload[]): string {
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          layout: { padding: { top: 20 } },
           plugins: {
             legend: { display: false },
             datalabels: Object.assign({}, dlDefaults, { font: { size: 13, weight: '600' } }),
@@ -767,6 +758,7 @@ function generateHtml(payloads: ProjectPayload[]): string {
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          layout: { padding: { top: 20 } },
           plugins: {
             legend: { display: false },
             datalabels: Object.assign({}, dlDefaults, { font: { size: 13, weight: '600' } }),
@@ -798,6 +790,7 @@ function generateHtml(payloads: ProjectPayload[]): string {
           options: {
             responsive: true,
             maintainAspectRatio: false,
+            layout: { padding: { top: 20 } },
             plugins: {
               legend: { display: false },
               datalabels: {
@@ -851,6 +844,7 @@ function generateHtml(payloads: ProjectPayload[]): string {
     function toggleTheme() {
       var html = document.documentElement;
       var next = currentTheme() === 'dark' ? 'light' : 'dark';
+      html.style.colorScheme = next;
       html.setAttribute('data-theme', next);
       localStorage.setItem('theme', next);
       createCharts();
@@ -858,8 +852,9 @@ function generateHtml(payloads: ProjectPayload[]): string {
 
     // -- Init --
     Chart.register(ChartDataLabels);
-    var savedTheme = localStorage.getItem('theme');
-    if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+    var savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.style.colorScheme = savedTheme;
+    document.documentElement.setAttribute('data-theme', savedTheme);
 
     // Pick initial project from URL hash or default to first
     var hashProject = location.hash.slice(1);

@@ -257,9 +257,9 @@ interface ProjectPayload {
 
 function generateHtml(payloads: ProjectPayload[]): string {
   // Build the JS data object — keyed by project ID
-  const projectsJs: Record<string, { name: string } & ProjectStats> = {};
+  const projectsJs: Record<string, { name: string; repo: string; base: string } & ProjectStats> = {};
   for (const p of payloads) {
-    projectsJs[p.config.id] = { name: p.config.name, ...p.stats };
+    projectsJs[p.config.id] = { name: p.config.name, repo: p.config.repo, base: p.config.base, ...p.stats };
   }
 
   // Tab buttons
@@ -332,6 +332,13 @@ function generateHtml(payloads: ProjectPayload[]): string {
     .header-text .subtitle {
       color: var(--color-fg-muted);
       font-size: 0.85rem;
+    }
+    .header-text .subtitle a {
+      color: var(--color-accent-fg);
+      text-decoration: none;
+    }
+    .header-text .subtitle a:hover {
+      text-decoration: underline;
     }
 
     /* -- Theme toggle -- */
@@ -823,8 +830,10 @@ function generateHtml(payloads: ProjectPayload[]): string {
       var p = projects[id];
 
       // Update subtitle
-      document.getElementById('subtitle').textContent =
-        p.name + ' \\u00B7 ' + p.total + ' releases \\u00B7 ' + p.dateRange[0] + ' to ' + p.dateRange[1];
+      var ghUrl = 'https://github.com/' + p.repo + '/pulls?q=is%3Apr+is%3Amerged+base%3A' + encodeURIComponent(p.base);
+      document.getElementById('subtitle').innerHTML =
+        p.name + ' \\u00B7 ' + p.total + ' releases \\u00B7 ' + p.dateRange[0] + ' to ' + p.dateRange[1] +
+        ' \\u00B7 <a href="' + ghUrl + '" target="_blank" rel="noopener">View on GitHub \\u2192</a>';
 
       // Update tabs
       document.querySelectorAll('.tab-bar .tab').forEach(function(btn) {

@@ -42,9 +42,11 @@ projects:
 ## Usage
 
 ```bash
-./make.ts              # generate dashboard, open in browser
-./make.ts --fresh      # re-fetch all data from GitHub
-./make.ts --no-open    # generate without opening browser
+./make.ts              # fetch latest data, generate dashboard, open in browser
+./make.ts --cached     # use existing data/*.csv files without calling GitHub
+./make.ts --no-open    # fetch latest data and generate without opening browser
 ```
 
-Data is cached in `data/`. Delete a CSV to re-fetch a single project.
+Data is cached in `data/`. The generated date range comes from the fetched PRs:
+GitHub returns the latest merged PRs up to `FETCH_LIMIT` in `make.ts`. Increase
+that constant if you need a longer historical range.

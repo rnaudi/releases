@@ -159,7 +159,7 @@ function parseCsv(csv: string): Release[] {
 
 async function loadProject(
   project: ProjectConfig,
-  fresh: boolean,
+  useCache: boolean,
 ): Promise<Release[]> {
   const file = csvFile(project.id);
   let hasCached = false;
@@ -170,7 +170,7 @@ async function loadProject(
     // no cached file
   }
 
-  if (hasCached && !fresh) {
+  if (hasCached && useCache) {
     $.logStep(`[${project.name}] Using cached ${file}`);
     const csv = await Deno.readTextFile(file);
     return parseCsv(csv);
@@ -878,8 +878,8 @@ function generateHtml(payloads: ProjectPayload[]): string {
 
 async function main() {
   const flags = parseArgs(Deno.args, {
-    boolean: ["fresh", "no-open"],
-    default: { fresh: false, "no-open": false },
+    boolean: ["cached", "fresh", "no-open"],
+    default: { cached: false, fresh: false, "no-open": false },
   });
 
   const projects = await loadConfig();
@@ -888,9 +888,10 @@ async function main() {
   await Deno.mkdir(DATA_DIR, { recursive: true });
 
   const payloads: ProjectPayload[] = [];
+  const useCache = flags.cached && !flags.fresh;
 
   for (const project of projects) {
-    const releases = await loadProject(project, flags.fresh);
+    const releases = await loadProject(project, useCache);
     const stats = aggregateProject(releases);
     payloads.push({ config: project, stats });
   }
